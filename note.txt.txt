@@ -1,0 +1,13 @@
+Dự định (10 ngày)
+5/9/2022
+9:02 -> : tìm hiểu các thư viện, công cụ để làm;
+	+) Một sô thư viện cần dụng: 
+		antd: thư viện về UI;
+		@ant-design/icons: thư viện dùng để sử dụng icons
+		date-fns: covert times
+		firebase:
+		lodash
+		style-component
+		react-router-dom
+		
+		
