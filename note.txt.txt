@@ -9,5 +9,7 @@ Dự định (10 ngày)
 		lodash
 		style-component
 		react-router-dom
-		
-		
+		+) Context API
+		+) antd with collasp
++) database trong firebase chon test mode nên phải cập nhật lại những rule bảo mật sau 30 ngày
+	nên chọn vị trí server ở gần chúng ta (asian south2)

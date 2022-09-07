@@ -1,26 +1,32 @@
 import React from 'react' ;
 import {Row, Col, Button, Typography} from 'antd' ;
 import {useNavigate} from 'react-router-dom'
-import firebase , {auth} from '../../firebase/config'
+import firebase , {auth, db} from '../../firebase/config'
+import { addDocument } from '../../firebase/services';
 
 const {Title} = Typography;
 
 const fbProvider = new firebase.auth.FacebookAuthProvider();
 
 function Login() {
-    let navigate = useNavigate();
     // xử lý sự kiện đăng nhập vào trang web bằng facebook
-    const handleFbLogin = () => {
-        auth.signInWithPopup(fbProvider);
-    }
-
-    // Xứ lý kiểm tra xem đã đăg nhập thành công chưa:
-    auth.onAuthStateChanged((user) => {
-        console.log(user);
-        if(user){
-            navigate('/');
+    const handleFbLogin = async () => {
+      // lay mot so du lieu o trong data de luu tru vao database
+      // B1: kiem tra xem user nay da dang nhap hay chua, neu chua thi tien hanh
+      // luu vao csdl
+        const {additionalUserInfo, user} = await auth.signInWithPopup(fbProvider);
+        // kiem tra xem co phai nguoi dung moi khong
+        if(additionalUserInfo?.isNewUser) {
+          addDocument('users', {
+            displayName: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+            uid: user.displayName,
+            providerId: additionalUserInfo.providerId
+          })
         }
-    });
+      }
+
   return (
     <div>
       <Row justify='center' style={{height:800}}>
