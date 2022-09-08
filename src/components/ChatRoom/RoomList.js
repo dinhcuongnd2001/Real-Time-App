@@ -29,7 +29,7 @@ const LinkStyled = styled(Typography.Link)`
 `;
 
 function RoomList() {
-
+    console.log('re-render roomlist')
     // ----- chuyen qua luu tru o trang AppProvider.js
     // const {user : {uid}} = useContext(AuthContext);
     // // console.log('roomList:', userInfo);
@@ -52,18 +52,21 @@ function RoomList() {
     // }, [uid])
 
     // const rooms = useFirestore('rooms', roomCondition);
-    const {rooms} = useContext(AppContext);
+    const {rooms, setIsAddRoomVisible} = useContext(AppContext);
+    const handCreateRoom =  () => {
+        setIsAddRoomVisible(true);
+    }
     return (
-    <Collapse ghost defaultActiveKey={['1']}>
-        <PanelStyle header= "List Room" key='1'>
-            {
-                rooms.map(room => {
-                    return <LinkStyled key={room.id}>{room.name}</LinkStyled>
-                })
-            }
-            <Button type='text' icon= {<PlusSquareOutlined />} className='add-room' >Join Room</Button>
-        </PanelStyle>
-    </Collapse>
+        <Collapse ghost defaultActiveKey={['1']}>
+            <PanelStyle header= "List Room" key='1'>
+                {
+                    rooms.map(room => {
+                        return <LinkStyled key={room.id}>{room.name}</LinkStyled>
+                    })
+                }
+                <Button onClick={handCreateRoom} type='text' icon= {<PlusSquareOutlined />} className='add-room' >Create Room</Button>
+            </PanelStyle>
+        </Collapse>
     )
 }
 

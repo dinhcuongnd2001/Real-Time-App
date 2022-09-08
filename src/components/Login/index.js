@@ -9,6 +9,7 @@ const {Title} = Typography;
 const fbProvider = new firebase.auth.FacebookAuthProvider();
 
 function Login() {
+    // console.log('re-render login');
     // xử lý sự kiện đăng nhập vào trang web bằng facebook
     const handleFbLogin = async () => {
       // lay mot so du lieu o trong data de luu tru vao database
@@ -16,6 +17,7 @@ function Login() {
       // luu vao csdl
         const {additionalUserInfo, user} = await auth.signInWithPopup(fbProvider);
         // kiem tra xem co phai nguoi dung moi khong
+        // console.log(additionalUserInfo);
         if(additionalUserInfo?.isNewUser) {
           addDocument('users', {
             displayName: user.displayName,
