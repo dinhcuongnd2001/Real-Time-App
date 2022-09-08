@@ -1,8 +1,10 @@
 import { Avatar, Button, Form, Input, Tooltip } from 'antd';
-import React from 'react';
+import React, { useContext, useMemo } from 'react';
 import styled from 'styled-components';
 import {UserAddOutlined} from '@ant-design/icons'
 import Message from './Message';
+
+import {AppContext} from '../../Context/AppProvider'
 
 const WrapperStyled = styled.div`
     height: 100vh;
@@ -65,23 +67,31 @@ const FormStyled = styled(Form)`
     }
 `;
 
-
-
-
 function ChatWindown() {
+    const {selectedRoom, members} = useContext(AppContext);
+    // console.log({rooms, selectedRoomId});
+    // chon ra phong duoc lua chon (chuyen vao trong appProvider)
+    // const selectedRoom = useMemo(() => {
+    //     return rooms.find((room) => room.id === selectedRoomId)
+    // },[rooms, selectedRoomId])
+
+    console.log('mebers: ', {members});
   return (
     <WrapperStyled>
         <HeaderStyled>
             <div className='header__info'>
-                <p className='header__title'>Room 1</p>
-                <span className='header__description'> This is Room 1</span>
+                <p className='header__title'>{selectedRoom === undefined ? 'Select the Room' : selectedRoom.name}</p>
+                <span className='header__description'>{selectedRoom === undefined ? 'Select the Room' : selectedRoom.description}</span>
             </div>
             <ButtonGroupStyled>
                 <Button icon={< UserAddOutlined/>} type= 'text'>
                     Invite
                 </Button>
                 <Avatar.Group size='small' maxCount={2}>
-                    <Tooltip title='A'>
+                    {members.map(member => <Tooltip key={member.id} title={member.displayName}>
+                        <Avatar src={member.photoURL}>{member.photoURL ? '':  member.displayName?.charAt(0)}</Avatar>                        
+                    </Tooltip>)}
+                    {/* <Tooltip title='A'>
                         <Avatar>A</Avatar>
                     </Tooltip>
 
@@ -95,7 +105,7 @@ function ChatWindown() {
                     
                     <Tooltip title='A'>
                         <Avatar>D</Avatar>
-                    </Tooltip>  
+                    </Tooltip>   */}
 
                 </Avatar.Group>
             </ButtonGroupStyled>

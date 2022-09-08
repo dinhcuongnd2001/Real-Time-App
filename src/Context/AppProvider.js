@@ -5,8 +5,10 @@ import useFirestore from '../hooks/useFirestore';
 const AppContext = createContext();
 function AppProvider({children}) {
     const [isAddRoomVisible, setIsAddRoomVisible] = useState(false);
+    const [selectedRoomId, setSelectedRoomId] = useState('');
     const {user : {uid}} = useContext(AuthContext);
 
+// lay ra nhung phong thuoc user
     const roomCondition = useMemo(() => {
         return {
             fieldName: 'members',
@@ -17,8 +19,37 @@ function AppProvider({children}) {
 
     const rooms = useFirestore('rooms', roomCondition);
 
+    // tim ra phong duoc lua chon
+    const selectedRoom = useMemo(() => {
+        return rooms.find((room) => room.id === selectedRoomId ) || {}
+    },[rooms, selectedRoomId])
+    // Lay ra nhung user cua 1 phong
+    // dang bi loi do selectedRoom la undefined
+
+    const usersCondition = useMemo(() => {
+        console.log('goi ham useCondition: ', [selectedRoom.members])
+        return {
+            fieldName: 'uid',
+            operator: 'in',
+            compareValue: selectedRoom.members,
+        }
+    }, [selectedRoom, uid])
+
+    const members = useFirestore('users', usersCondition);
+    // console.log('member: ', {members});
+    // console.log(selectedRoomId);
     return (
-    <AppContext.Provider value={{rooms, isAddRoomVisible, setIsAddRoomVisible}}>
+    <AppContext.Provider 
+        value={{
+            rooms, 
+            members,
+            selectedRoom,
+            isAddRoomVisible, 
+            setIsAddRoomVisible,
+            selectedRoomId,
+            setSelectedRoomId
+        }}
+    >
         {children}
     </AppContext.Provider>
     )

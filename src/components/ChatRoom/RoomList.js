@@ -52,7 +52,7 @@ function RoomList() {
     // }, [uid])
 
     // const rooms = useFirestore('rooms', roomCondition);
-    const {rooms, setIsAddRoomVisible} = useContext(AppContext);
+    const {rooms, setIsAddRoomVisible, setSelectedRoomId} = useContext(AppContext);
     const handCreateRoom =  () => {
         setIsAddRoomVisible(true);
     }
@@ -61,7 +61,7 @@ function RoomList() {
             <PanelStyle header= "List Room" key='1'>
                 {
                     rooms.map(room => {
-                        return <LinkStyled key={room.id}>{room.name}</LinkStyled>
+                        return <LinkStyled onClick={() => {setSelectedRoomId(room.id)}} key={room.id}>{room.name}</LinkStyled>
                     })
                 }
                 <Button onClick={handCreateRoom} type='text' icon= {<PlusSquareOutlined />} className='add-room' >Create Room</Button>
