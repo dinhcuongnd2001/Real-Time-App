@@ -5,6 +5,7 @@ import useFirestore from '../hooks/useFirestore';
 const AppContext = createContext();
 function AppProvider({children}) {
     const [isAddRoomVisible, setIsAddRoomVisible] = useState(false);
+    const [isInviteMembersVisible, setIsInviteMembersVisible] = useState(false);
     const [selectedRoomId, setSelectedRoomId] = useState('');
     const {user : {uid}} = useContext(AuthContext);
 
@@ -27,7 +28,7 @@ function AppProvider({children}) {
     // dang bi loi do selectedRoom la undefined
 
     const usersCondition = useMemo(() => {
-        console.log('goi ham useCondition: ', [selectedRoom.members])
+        // console.log('goi ham useCondition: ', [selectedRoom.members])
         return {
             fieldName: 'uid',
             operator: 'in',
@@ -46,6 +47,8 @@ function AppProvider({children}) {
             selectedRoom,
             isAddRoomVisible, 
             setIsAddRoomVisible,
+            isInviteMembersVisible,
+            setIsInviteMembersVisible,
             selectedRoomId,
             setSelectedRoomId
         }}

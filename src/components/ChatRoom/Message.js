@@ -1,7 +1,7 @@
 import React from 'react'
 import {Avatar, Typography} from 'antd'
 import styled from 'styled-components'
-
+import {formatRelative} from 'date-fns/esm'
 const WapperStyle = styled.div`
     margin-bottom: 10px;
 
@@ -19,13 +19,28 @@ const WapperStyle = styled.div`
     }
 `;
 
-function Message({text, displayName, createAt, photoURL}) {
+function formatDate(seconds) {
+  let formattedDate = '';
+
+  if (seconds) {
+    formattedDate = formatRelative(new Date(seconds * 1000), new Date());
+
+    formattedDate =
+      formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+  }
+
+  return formattedDate;
+}
+
+function Message({text, displayName, createdAt, photoURL}) {
   return (
     <WapperStyle>
       <div>
-        <Avatar size= 'small' src={photoURL} >A</Avatar>
+        <Avatar size= 'small' src={photoURL} >
+          {photoURL? '' : displayName?.charAt(0)?.toUpperCase()}
+        </Avatar>
         <Typography.Text className='author'>{displayName}</Typography.Text>
-        <Typography.Text className='date' >{createAt}</Typography.Text>
+        <Typography.Text className='date' >{formatDate(createdAt?.seconds)}</Typography.Text>
       </div>
 
       <div>

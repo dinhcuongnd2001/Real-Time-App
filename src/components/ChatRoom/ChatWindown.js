@@ -1,10 +1,14 @@
-import { Avatar, Button, Form, Input, Tooltip } from 'antd';
-import React, { useContext, useMemo } from 'react';
+import { Alert, Avatar, Button, Form, Input, Tooltip } from 'antd';
+import React, { useContext, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import {UserAddOutlined} from '@ant-design/icons'
 import Message from './Message';
 
 import {AppContext} from '../../Context/AppProvider'
+import { addDocument } from '../../firebase/services';
+import { AuthContext } from '../../Context/AuthProvider';
+import useFirestore from '../../hooks/useFirestore';
+import {formatRelative} from 'date-fns'
 
 const WrapperStyled = styled.div`
     height: 100vh;
@@ -67,24 +71,57 @@ const FormStyled = styled(Form)`
     }
 `;
 
+
 function ChatWindown() {
-    const {selectedRoom, members} = useContext(AppContext);
+    const {selectedRoom, members, setIsInviteMembersVisible} = useContext(AppContext);
+    const {user : {uid, photoURL, displayName}} = useContext(AuthContext);
     // console.log({rooms, selectedRoomId});
     // chon ra phong duoc lua chon (chuyen vao trong appProvider)
     // const selectedRoom = useMemo(() => {
     //     return rooms.find((room) => room.id === selectedRoomId)
     // },[rooms, selectedRoomId])
 
-    console.log('mebers: ', {members});
+    // console.log('mebers: ', {members});
+    const [inputValue, setInputValue] = useState('');
+    const[form] = Form.useForm();
+    const handleInputChange = (e) => {
+        setInputValue(e.target.value)
+    }
+
+    const handleOnSubmit = () => {
+        addDocument('message', {
+            text: inputValue,
+            uid,
+            photoURL,
+            roomId: selectedRoom.id,
+            displayName
+        })
+        form.resetFields(['messages'])
+    }
+
+    const conditionMessage = useMemo(() => ({
+        fieldName: 'roomId',
+        operator: '==',
+        compareValue: selectedRoom.id
+    }), [selectedRoom.id])
+
+    const messages = useFirestore('message', conditionMessage);
+    console.log({messages})     
   return (
     <WrapperStyled>
+        {selectedRoom.id ? 
+        <>        
         <HeaderStyled>
             <div className='header__info'>
                 <p className='header__title'>{selectedRoom === undefined ? 'Select the Room' : selectedRoom.name}</p>
                 <span className='header__description'>{selectedRoom === undefined ? 'Select the Room' : selectedRoom.description}</span>
             </div>
             <ButtonGroupStyled>
-                <Button icon={< UserAddOutlined/>} type= 'text'>
+                <Button 
+                    icon={< UserAddOutlined/>} 
+                    type= 'text'
+                    onClick={() => setIsInviteMembersVisible(true)}
+                >
                     Invite
                 </Button>
                 <Avatar.Group size='small' maxCount={2}>
@@ -113,24 +150,35 @@ function ChatWindown() {
         
         <ContentStyled>
             <MessageListStyled>
-                <Message text= 'test' displayName='Cuong' createAt= '12121212123' photoURL={null}></Message>
-                <Message text= 'test' displayName='Cuong' createAt= '12121212123' photoURL={null}></Message>
-                <Message text= 'test' displayName='Cuong' createAt= '12121212123' photoURL={null}></Message>
-                <Message text= 'test' displayName='Cuong' createAt= '12121212123' photoURL={null}></Message>
+                    {messages.map(mes => 
+                    <Message
+                        key={mes.id}
+                        text={mes.text}
+                        displayName= {mes.displayName}
+                        createdAt={mes.createdAt}
+                        photoURL = {mes.photoURL}
+                    >
+                    </Message>)}
             </MessageListStyled>
 
-            <FormStyled>
-                <Form.Item>
+            <FormStyled form={form} >
+                <Form.Item name='messages'>
                     <Input 
+                        onChange={handleInputChange}
+                        onPressEnter = {handleOnSubmit}
                         bordered = {false} 
                         autoComplete = 'off'
                         placeholder='Typing message ...'
                     />
                 </Form.Item>
 
-                <Button>Send</Button>
+                <Button type='primary' onClick={handleOnSubmit}>Send</Button>
             </FormStyled>
         </ContentStyled>
+        </>
+        : <Alert message= "Let's select Romm" type='info'showIcon style={{margin: 5}} closable/> 
+        }
+
 
     </WrapperStyled>
   )

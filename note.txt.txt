@@ -14,7 +14,9 @@ Dự định (10 ngày)
 +) database trong firebase chon test mode nên phải cập nhật lại những rule bảo mật sau 30 ngày
 	nên chọn vị trí server ở gần chúng ta (asian south2)
 +) more features: Delete Room
++) debounceSelect: toi uu hieu nang cho viec tim kiem => hay
 +) Bug: Khi mà lần đầu đăng nhập thì rooms đang là một object trống nên khi đó muốn lấy ra được
 số lượng members trong 1 phòng sẽ ko được, trong code lại sử dụng đoạn code lấy members trong useMemo
 với ràng buộc [uid] nên chỉ khi đăng nhập vào user mới thì mới có thể gọi để lấy members
 => thay ràng buộc uid thành ràng buộc selectedRoom va uid 
++) loi dang nhap kho co url (Update len firebase v9.9)
